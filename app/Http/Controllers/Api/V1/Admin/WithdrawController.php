@@ -30,22 +30,14 @@ class WithdrawController extends Controller
 
         $data = $request->validate(['admin_note' => ['nullable', 'string', 'max:255']]);
 
-        DB::transaction(function () use ($withdrawal, $request, $data) {
-            // Debit at approval time so balance reflects approved disbursement.
-            $this->wallet->debit(
-                $withdrawal->user,
-                (float) $withdrawal->amount,
-                WalletTxType::Withdrawal,
-                $withdrawal,
-                "Withdrawal to {$withdrawal->bank_name}"
-            );
-            $withdrawal->update([
-                'status' => Status::Approved,
-                'admin_note' => $data['admin_note'] ?? null,
-                'processed_by' => $request->user()->id,
-                'processed_at' => now(),
-            ]);
-        });
+        // Funds were already held (debited) when the user requested the withdrawal.
+        // Approval just confirms the disbursement.
+        $withdrawal->update([
+            'status' => Status::Approved,
+            'admin_note' => $data['admin_note'] ?? null,
+            'processed_by' => $request->user()->id,
+            'processed_at' => now(),
+        ]);
 
         return new WithdrawalResource($withdrawal->fresh('user'));
     }
@@ -54,12 +46,24 @@ class WithdrawController extends Controller
     {
         abort_unless($withdrawal->status === Status::Pending, 422, 'Already processed.');
         $data = $request->validate(['admin_note' => ['required', 'string', 'max:255']]);
-        $withdrawal->update([
-            'status' => Status::Rejected,
-            'admin_note' => $data['admin_note'],
-            'processed_by' => $request->user()->id,
-            'processed_at' => now(),
-        ]);
+
+        DB::transaction(function () use ($withdrawal, $request, $data) {
+            $withdrawal->update([
+                'status' => Status::Rejected,
+                'admin_note' => $data['admin_note'],
+                'processed_by' => $request->user()->id,
+                'processed_at' => now(),
+            ]);
+            // Refund the hold placed at request time.
+            $this->wallet->credit(
+                $withdrawal->user,
+                (float) $withdrawal->amount,
+                WalletTxType::WithdrawalRefund,
+                $withdrawal,
+                "Withdrawal rejected — funds returned"
+            );
+        });
+
         return new WithdrawalResource($withdrawal->fresh('user'));
     }
 }

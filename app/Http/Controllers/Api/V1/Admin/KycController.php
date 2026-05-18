@@ -18,8 +18,8 @@ class KycController extends Controller
         if ($status = $request->string('status')->toString()) {
             $q->where('status', $status);
         }
-        return response()->json([
-            'data' => $q->paginate(20)->through(fn (KycSubmission $s) => [
+        return response()->json(
+            $q->paginate(20)->through(fn (KycSubmission $s) => [
                 'uuid' => $s->uuid,
                 'id_type' => $s->id_type,
                 'id_number' => $s->id_number,
@@ -30,8 +30,8 @@ class KycController extends Controller
                 'admin_note' => $s->admin_note,
                 'created_at' => $s->created_at,
                 'user' => ['uuid' => $s->user->uuid, 'name' => $s->user->name, 'phone' => $s->user->phone],
-            ]),
-        ]);
+            ])
+        );
     }
 
     public function approve(Request $request, KycSubmission $submission)

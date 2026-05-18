@@ -26,8 +26,8 @@ export default function AdminKyc() {
           </button>
         ))}
       </div>
-      {isLoading ? <Loader /> : !data?.data?.data?.length ? <Empty>No {filter} submissions.</Empty> : (
-        <ul className="space-y-2">{data.data.data.map((s) => <Row key={s.uuid} s={s} qc={qc} />)}</ul>
+      {isLoading ? <Loader /> : !data?.data?.length ? <Empty>No {filter} submissions.</Empty> : (
+        <ul className="space-y-2">{data.data.map((s) => <Row key={s.uuid} s={s} qc={qc} />)}</ul>
       )}
     </PageWrap>
   );

@@ -13,7 +13,10 @@ class InvestmentResource extends JsonResource
             'uuid' => $this->uuid,
             'principal' => $this->principal,
             'interest_rate' => $this->interest_rate,
-            'frequency' => $this->frequency->value,
+            'frequency' => [
+                'value' => $this->frequency->value,
+                'label' => $this->frequency->label(),
+            ],
             'term_days' => $this->term_days,
             'total_paid_out' => $this->total_paid_out,
             'started_at' => $this->started_at,

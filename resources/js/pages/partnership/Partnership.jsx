@@ -66,7 +66,7 @@ export default function Partnership() {
                   <div>
                     <p className="text-base font-bold">{peso(i.principal)}</p>
                     <p className="text-xs text-slate-500">
-                      {i.package?.name} · {i.interest_rate}% {i.frequency}
+                      {i.package?.name} · {i.interest_rate}% {i.frequency?.label?.toLowerCase()}
                     </p>
                     <p className="text-xs text-slate-500">
                       Matures {new Date(i.matures_at).toLocaleDateString()}

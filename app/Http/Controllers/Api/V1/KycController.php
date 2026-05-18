@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\KycStatus;
+use App\Enums\Status;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class KycController extends Controller
 {
@@ -24,6 +26,18 @@ class KycController extends Controller
 
     public function submit(Request $request)
     {
+        $user = $request->user();
+
+        if ($user->kyc_status === KycStatus::Approved) {
+            throw ValidationException::withMessages(['id_type' => 'KYC already approved.']);
+        }
+        $hasPending = $user->kycSubmissions()
+            ->where('status', Status::Pending)
+            ->exists();
+        if ($hasPending) {
+            throw ValidationException::withMessages(['id_type' => 'A KYC submission is already under review.']);
+        }
+
         $data = $request->validate([
             'id_type' => ['required', 'string', 'in:passport,drivers_license,national_id,umid,sss,prc'],
             'id_number' => ['required', 'string', 'max:64'],
@@ -36,7 +50,6 @@ class KycController extends Controller
         $back = $request->file('id_back')?->store('kyc', 'public');
         $selfie = $request->file('selfie')->store('kyc', 'public');
 
-        $user = $request->user();
         $submission = $user->kycSubmissions()->create([
             'id_type' => $data['id_type'],
             'id_number' => $data['id_number'],

@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Enums\WalletTxType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\WithdrawalResource;
 use App\Models\Withdrawal;
 use App\Services\WalletService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use RuntimeException;
 
 class WithdrawController extends Controller
 {
@@ -37,11 +40,28 @@ class WithdrawController extends Controller
             'account_number' => ['required', 'string', 'max:64'],
         ]);
 
-        if ((float) $this->wallet->balance($request->user()) < (float) $data['amount']) {
-            throw ValidationException::withMessages(['amount' => 'Insufficient balance.']);
-        }
+        $withdrawal = DB::transaction(function () use ($request, $data) {
+            if ((float) $this->wallet->balance($request->user()) < (float) $data['amount']) {
+                throw ValidationException::withMessages(['amount' => 'Insufficient balance.']);
+            }
 
-        $withdrawal = $request->user()->withdrawals()->create($data + ['status' => 'pending']);
+            $w = $request->user()->withdrawals()->create($data + ['status' => 'pending']);
+
+            // Hold funds at request time so balance can't be double-spent before admin reviews.
+            try {
+                $this->wallet->debit(
+                    $request->user(),
+                    (float) $data['amount'],
+                    WalletTxType::Withdrawal,
+                    $w,
+                    "Withdrawal request hold"
+                );
+            } catch (RuntimeException $e) {
+                throw ValidationException::withMessages(['amount' => $e->getMessage()]);
+            }
+
+            return $w;
+        });
 
         return new WithdrawalResource($withdrawal);
     }
