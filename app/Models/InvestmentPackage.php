@@ -13,7 +13,7 @@ class InvestmentPackage extends Model
 
     protected $fillable = [
         'uuid', 'name', 'description', 'min_amount', 'max_amount',
-        'interest_rate', 'frequency', 'term_days', 'is_active',
+        'interest_rate', 'frequency', 'term_days', 'is_active', 'return_capital',
     ];
 
     protected $casts = [
@@ -21,6 +21,7 @@ class InvestmentPackage extends Model
         'max_amount' => 'decimal:2',
         'interest_rate' => 'decimal:4',
         'is_active' => 'boolean',
+        'return_capital' => 'boolean',
         'frequency' => PayoutFrequency::class,
     ];
 }

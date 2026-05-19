@@ -48,6 +48,7 @@ class InvestmentService
                 'matures_at' => $matures,
                 'next_payout_at' => $next,
                 'status' => InvestmentStatus::Active,
+                'return_capital' => (bool) $package->return_capital,
             ]);
 
             $this->wallet->debit(
@@ -112,19 +113,21 @@ class InvestmentService
 
             $next = $investment->frequency->addInterval($investment->next_payout_at);
             if ($next->greaterThanOrEqualTo($investment->matures_at)) {
-                $this->wallet->credit(
-                    $investment->user,
-                    (float) $investment->principal,
-                    WalletTxType::InvestmentReturn,
-                    $investment,
-                    "Principal returned at maturity"
-                );
-                InvestmentTransaction::create([
-                    'investment_id' => $investment->id,
-                    'type' => 'return',
-                    'amount' => $investment->principal,
-                    'paid_at' => $asOf,
-                ]);
+                if ($investment->return_capital) {
+                    $this->wallet->credit(
+                        $investment->user,
+                        (float) $investment->principal,
+                        WalletTxType::InvestmentReturn,
+                        $investment,
+                        "Principal returned at maturity"
+                    );
+                    InvestmentTransaction::create([
+                        'investment_id' => $investment->id,
+                        'type' => 'return',
+                        'amount' => $investment->principal,
+                        'paid_at' => $asOf,
+                    ]);
+                }
                 $investment->status = InvestmentStatus::Matured;
                 $investment->next_payout_at = null;
             } else {

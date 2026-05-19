@@ -22,6 +22,7 @@ class InvestmentPackageResource extends JsonResource
             ],
             'term_days' => $this->term_days,
             'is_active' => $this->is_active,
+            'return_capital' => (bool) $this->return_capital,
         ];
     }
 }

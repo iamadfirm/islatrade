@@ -21,6 +21,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'phone' => $this->phone,
             'email' => $this->email,
+            'referral_code' => $this->referral_code,
             'avatar_url' => $this->avatar_path ? Storage::url($this->avatar_path) : null,
             'kyc_status' => $this->kyc_status?->toArray(),
             'wallet_balance' => app(WalletService::class)->balance($this->resource),

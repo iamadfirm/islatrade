@@ -23,6 +23,7 @@ class InvestmentResource extends JsonResource
             'matures_at' => $this->matures_at,
             'next_payout_at' => $this->next_payout_at,
             'status' => $this->status->toArray(),
+            'return_capital' => (bool) $this->return_capital,
             'created_at' => $this->created_at,
             'package' => $this->whenLoaded('package', fn () => new InvestmentPackageResource($this->package)),
             'user' => $this->whenLoaded('user', fn () => [

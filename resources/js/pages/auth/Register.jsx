@@ -10,15 +10,19 @@ import {
   TrendingUp,
   ShieldCheck,
   Sparkles,
+  Gift,
 } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import { useAuth } from "../../stores/authStore";
 
 export default function Register() {
+  const [params] = useSearchParams();
   const [form, setForm] = useState({
     name: "",
     phone: "",
     password: "",
     password_confirmation: "",
+    referral_code: (params.get("ref") || "").toUpperCase(),
   });
   const [showPw, setShowPw] = useState(false);
   const [errors, setErrors] = useState({});
@@ -124,6 +128,16 @@ export default function Register() {
               value={form.password_confirmation}
               onChange={set("password_confirmation")}
               required
+            />
+            <Field
+              icon={<Gift size={18} />}
+              label="Referral code (optional)"
+              placeholder="e.g. ABC12345"
+              value={form.referral_code}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, referral_code: e.target.value.toUpperCase() }))
+              }
+              error={errors.referral_code?.[0]}
             />
 
             {errors._ && (

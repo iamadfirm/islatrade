@@ -25,6 +25,8 @@ class User extends Authenticatable
         'avatar_path',
         'kyc_status',
         'kyc_submitted_at',
+        'referral_code',
+        'referred_by_user_id',
     ];
 
     protected $hidden = [
@@ -50,7 +52,29 @@ class User extends Authenticatable
             if (empty($user->uuid)) {
                 $user->uuid = (string) \Illuminate\Support\Str::uuid();
             }
+            if (empty($user->referral_code)) {
+                $user->referral_code = self::generateReferralCode();
+            }
         });
+    }
+
+    public static function generateReferralCode(): string
+    {
+        do {
+            $code = strtoupper(\Illuminate\Support\Str::random(8));
+        } while (self::where('referral_code', $code)->exists());
+
+        return $code;
+    }
+
+    public function referrer(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'referred_by_user_id');
+    }
+
+    public function referralsMade(): HasMany
+    {
+        return $this->hasMany(Referral::class, 'referrer_id')->latest('id');
     }
 
     public function getRouteKeyName(): string

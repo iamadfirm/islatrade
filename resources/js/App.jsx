@@ -15,6 +15,7 @@ import Kyc from "./pages/kyc/Kyc";
 import Partnership from "./pages/partnership/Partnership";
 import EnrollForm from "./pages/partnership/EnrollForm";
 import Profile from "./pages/Profile";
+import Referrals from "./pages/Referrals";
 import AdminDeposits from "./pages/admin/AdminDeposits";
 import AdminWithdrawals from "./pages/admin/AdminWithdrawals";
 import AdminKyc from "./pages/admin/AdminKyc";
@@ -60,6 +61,7 @@ export default function App() {
             <Route path="partnership" element={<Partnership />} />
             <Route path="partnership/enroll/:uuid" element={<EnrollForm />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="referrals" element={<Referrals />} />
           </Route>
 
           <Route path="/admin" element={<Protected admin><AdminLayout /></Protected>}>

@@ -7,6 +7,8 @@ use App\Enums\WalletTxType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DepositResource;
 use App\Models\Deposit;
+use App\Models\FeatureSetting;
+use App\Models\Referral;
 use App\Services\WalletService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -44,9 +46,56 @@ class DepositController extends Controller
                 $deposit,
                 "Deposit approved"
             );
+
+            $this->payReferralBonusIfEligible($deposit);
         });
 
         return new DepositResource($deposit->fresh('user'));
+    }
+
+    private function payReferralBonusIfEligible(Deposit $deposit): void
+    {
+        $referral = Referral::where('referee_id', $deposit->user_id)
+            ->whereNull('bonus_paid_at')
+            ->first();
+        if (! $referral) {
+            return;
+        }
+
+        $firstApproved = Deposit::where('user_id', $deposit->user_id)
+            ->where('status', Status::Approved)
+            ->orderBy('id')
+            ->value('id');
+        if ($firstApproved !== $deposit->id) {
+            return;
+        }
+
+        $setting = FeatureSetting::for('referral');
+        if (! $setting || ! $setting->enabled) {
+            return;
+        }
+        $bonus = (float) $setting->fee_flat;
+        if ($bonus <= 0) {
+            return;
+        }
+
+        $referrer = $referral->referrer;
+        if (! $referrer) {
+            return;
+        }
+
+        $this->wallet->credit(
+            $referrer,
+            $bonus,
+            WalletTxType::ReferralBonus,
+            $referral,
+            "Referral bonus from {$deposit->user->phone}"
+        );
+
+        $referral->update([
+            'bonus_amount' => $bonus,
+            'bonus_paid_at' => now(),
+        ]);
     }
 
     public function reject(Request $request, Deposit $deposit)

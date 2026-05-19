@@ -151,17 +151,27 @@ export default function EnrollForm() {
               <Mini label="Total interest" value={peso(projection.total)} highlight />
             </div>
             <p className="mt-3 text-[11px] text-gold-700">
-              Principal of <b>{peso(a)}</b> returns at maturity (Day {p?.term_days}). Estimates assume on-schedule payouts.
+              {p?.return_capital === false ? (
+                <>Principal of <b>{peso(a)}</b> is <b>retained</b> at maturity — earnings come from periodic interest only.</>
+              ) : (
+                <>Principal of <b>{peso(a)}</b> returns at maturity (Day {p?.term_days}). Estimates assume on-schedule payouts.</>
+              )}
             </p>
           </div>
         )}
 
         {errors._ && <p className="mt-3 text-sm text-rose-600">{errors._[0]}</p>}
 
+        {p?.is_active === false && (
+          <div className="mt-3 rounded-2xl bg-amber-50 p-3 text-[11px] text-amber-800 ring-1 ring-amber-200">
+            This package is currently paused and not accepting new enrollments.
+          </div>
+        )}
+
         <Button
           className="mt-4 w-full"
           onClick={() => enroll.mutate()}
-          disabled={enroll.isPending || !amount}
+          disabled={enroll.isPending || !amount || p?.is_active === false}
         >
           {enroll.isPending ? "Enrolling…" : (
             <>

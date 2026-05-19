@@ -17,6 +17,7 @@ class Investment extends Model
     protected $fillable = [
         'uuid', 'user_id', 'package_id', 'principal', 'interest_rate', 'frequency',
         'term_days', 'total_paid_out', 'started_at', 'matures_at', 'next_payout_at', 'status',
+        'return_capital',
     ];
 
     protected $casts = [
@@ -28,6 +29,7 @@ class Investment extends Model
         'next_payout_at' => 'datetime',
         'status' => InvestmentStatus::class,
         'frequency' => PayoutFrequency::class,
+        'return_capital' => 'boolean',
     ];
 
     public function user(): BelongsTo

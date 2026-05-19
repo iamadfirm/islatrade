@@ -50,6 +50,7 @@ class PackageController extends Controller
             'frequency' => [$req, 'string', 'in:hourly,daily,weekly,monthly'],
             'term_days' => [$req, 'integer', 'min:1'],
             'is_active' => ['boolean'],
+            'return_capital' => ['boolean'],
         ]);
     }
 }

@@ -13,6 +13,7 @@ enum WalletTxType: string
     case InvestmentPayout = 'investment_payout';
     case InvestmentReturn = 'investment_return';
     case AdminAdjustment = 'admin_adjustment';
+    case ReferralBonus = 'referral_bonus';
 
     public function isCredit(): bool
     {
@@ -22,6 +23,7 @@ enum WalletTxType: string
             self::TransferIn,
             self::InvestmentPayout,
             self::InvestmentReturn,
+            self::ReferralBonus,
         ], true);
     }
 

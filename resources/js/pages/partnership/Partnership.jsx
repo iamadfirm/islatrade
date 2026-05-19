@@ -125,41 +125,54 @@ export default function Partnership() {
 }
 
 function PackageCard({ p }) {
+  const paused = p.is_active === false;
+  const capitalHint = p.return_capital === false
+    ? "Interest-only · capital retained at maturity"
+    : "Capital returned at maturity";
+
+  const body = (
+    <Card className={`group relative overflow-hidden p-4 transition ${paused ? "opacity-60" : "hover:border-gold-300 hover:pop-shadow"}`}>
+      <span className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gold-100/60 blur-2xl transition group-hover:bg-gold-200/80" />
+      <div className="relative flex items-start justify-between gap-3">
+        <div className="flex items-start gap-3">
+          <div className="grid h-11 w-11 place-items-center rounded-2xl gradient-gold text-brand-900">
+            <Layers size={18} />
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5">
+              <p className="text-sm font-bold text-brand-800">{p.name}</p>
+              {paused && <Pill tone="amber">Paused</Pill>}
+            </div>
+            <p className="text-[11px] text-slate-500">
+              {p.term_days} days · {p.frequency.label.toLowerCase()} payout
+            </p>
+            <p className="mt-0.5 text-[10px] font-medium text-slate-500">
+              {capitalHint}
+            </p>
+          </div>
+        </div>
+        <div className="text-right">
+          <p className="text-xl font-black text-gold-600">{p.interest_rate}%</p>
+          <p className="text-[10px] uppercase tracking-widest text-slate-500">
+            Interest
+          </p>
+        </div>
+      </div>
+      <div className="relative mt-3 flex items-center justify-between text-[11px] text-slate-600">
+        <span>
+          <b className="text-brand-800">{peso(p.min_amount)}</b>{" "}
+          {p.max_amount ? `– ${peso(p.max_amount)}` : "and above"}
+        </span>
+        <span className="inline-flex items-center gap-1 font-semibold text-brand-600">
+          {paused ? "Unavailable" : <>Enroll <ChevronRight size={14} /></>}
+        </span>
+      </div>
+    </Card>
+  );
+
   return (
     <li>
-      <Link to={`/partnership/enroll/${p.uuid}`}>
-        <Card className="group relative overflow-hidden p-4 transition hover:border-gold-300 hover:pop-shadow">
-          <span className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gold-100/60 blur-2xl transition group-hover:bg-gold-200/80" />
-          <div className="relative flex items-start justify-between gap-3">
-            <div className="flex items-start gap-3">
-              <div className="grid h-11 w-11 place-items-center rounded-2xl gradient-gold text-brand-900">
-                <Layers size={18} />
-              </div>
-              <div>
-                <p className="text-sm font-bold text-brand-800">{p.name}</p>
-                <p className="text-[11px] text-slate-500">
-                  {p.term_days} days · {p.frequency.label.toLowerCase()} payout
-                </p>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-xl font-black text-gold-600">{p.interest_rate}%</p>
-              <p className="text-[10px] uppercase tracking-widest text-slate-500">
-                Interest
-              </p>
-            </div>
-          </div>
-          <div className="relative mt-3 flex items-center justify-between text-[11px] text-slate-600">
-            <span>
-              <b className="text-brand-800">{peso(p.min_amount)}</b>{" "}
-              {p.max_amount ? `– ${peso(p.max_amount)}` : "and above"}
-            </span>
-            <span className="inline-flex items-center gap-1 font-semibold text-brand-600">
-              Enroll <ChevronRight size={14} />
-            </span>
-          </div>
-        </Card>
-      </Link>
+      {paused ? body : <Link to={`/partnership/enroll/${p.uuid}`}>{body}</Link>}
     </li>
   );
 }
@@ -183,6 +196,9 @@ function InvestmentRow({ i }) {
             </div>
             <p className="mt-0.5 text-[11px] text-slate-500">
               {i.package?.name} · {i.interest_rate}% {i.frequency?.label?.toLowerCase()}
+            </p>
+            <p className="mt-0.5 text-[10px] text-slate-400">
+              {i.return_capital === false ? "Interest-only (capital retained)" : "Capital returns at maturity"}
             </p>
           </div>
           <div className="text-right">

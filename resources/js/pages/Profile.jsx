@@ -11,6 +11,7 @@ import {
   CalendarDays,
   Wallet as WalletIcon,
   KeyRound,
+  Gift,
   HelpCircle,
   Camera,
   Pencil,
@@ -196,6 +197,12 @@ export default function Profile() {
               <ChevronRight className="text-slate-300" />
             </Card>
           </button>
+          <LinkRow
+            to="/referrals"
+            icon={<Gift size={18} />}
+            title="Refer & earn"
+            sub={user?.referral_code ? `Your code: ${user.referral_code}` : "Invite friends and earn"}
+          />
           <LinkRow
             to="#"
             icon={<HelpCircle size={18} />}

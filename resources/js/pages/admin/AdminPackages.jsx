@@ -9,6 +9,8 @@ import {
   Clock,
   Coins,
   X,
+  Pause,
+  Play,
 } from "lucide-react";
 import api, { peso } from "../../lib/api";
 import {
@@ -32,6 +34,7 @@ const empty = {
   frequency: "daily",
   term_days: "",
   is_active: true,
+  return_capital: true,
 };
 
 export default function AdminPackages() {
@@ -78,9 +81,15 @@ export default function AdminPackages() {
       frequency: p.frequency.value,
       term_days: p.term_days,
       is_active: p.is_active,
+      return_capital: p.return_capital ?? true,
     });
     setShowForm(true);
   }
+
+  const toggleActive = useMutation({
+    mutationFn: (p) => api.put(`/admin/packages/${p.uuid}`, { is_active: !p.is_active }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-packages"] }),
+  });
 
   function cancelEdit() {
     setEditing(null);
@@ -197,6 +206,20 @@ export default function AdminPackages() {
                 Visible to users in the Partnership list
               </span>
             </label>
+            <label className="flex items-start gap-2 rounded-2xl bg-gold-50/60 p-3 text-sm ring-1 ring-gold-100">
+              <input
+                type="checkbox"
+                checked={!!form.return_capital}
+                onChange={(e) => setForm({ ...form, return_capital: e.target.checked })}
+                className="mt-0.5 h-4 w-4 accent-gold-600"
+              />
+              <div className="flex-1">
+                <p className="font-medium text-brand-800">Return capital at maturity</p>
+                <p className="text-[11px] text-slate-500">
+                  If unchecked, only periodic interest is paid out; principal is retained at maturity.
+                </p>
+              </div>
+            </label>
             <div className="grid grid-cols-2 gap-2 pt-2">
               <Button onClick={() => save.mutate()} disabled={save.isPending}>
                 {editing ? "Update package" : "Create package"}
@@ -232,9 +255,12 @@ export default function AdminPackages() {
                           {p.is_active ? (
                             <Pill tone="emerald" dot>Active</Pill>
                           ) : (
-                            <Pill tone="slate">Inactive</Pill>
+                            <Pill tone="amber">Paused</Pill>
                           )}
                           <Pill tone="brand">{p.frequency.label}</Pill>
+                          {p.return_capital === false && (
+                            <Pill tone="slate">Interest-only</Pill>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -265,6 +291,17 @@ export default function AdminPackages() {
                     </div>
                   </div>
                   <div className="relative mt-3 flex justify-end gap-2">
+                    <button
+                      onClick={() => toggleActive.mutate(p)}
+                      disabled={toggleActive.isPending}
+                      className={
+                        p.is_active
+                          ? "inline-flex items-center gap-1 rounded-full bg-amber-50 px-3 py-1 text-[11px] font-semibold text-amber-700 ring-1 ring-amber-100 hover:bg-amber-100 disabled:opacity-50"
+                          : "inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-semibold text-emerald-700 ring-1 ring-emerald-100 hover:bg-emerald-100 disabled:opacity-50"
+                      }
+                    >
+                      {p.is_active ? (<><Pause size={11} /> Pause</>) : (<><Play size={11} /> Resume</>)}
+                    </button>
                     <button
                       onClick={() => startEdit(p)}
                       className="inline-flex items-center gap-1 rounded-full bg-brand-50 px-3 py-1 text-[11px] font-semibold text-brand-700 ring-1 ring-brand-100 hover:bg-brand-100"
