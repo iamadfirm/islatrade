@@ -101,7 +101,7 @@ export default function Wallet() {
         <ActionTile to="/transfer" icon={<Send size={18} />} label="Transfer" />
       </div>
 
-      <div className="mt-5 grid grid-cols-2 gap-3">
+      <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Stat
           tone="emerald"
           icon={<TrendingUp size={16} />}

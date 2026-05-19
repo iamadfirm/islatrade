@@ -130,7 +130,7 @@ export default function Profile() {
             </button>
           </div>
         )}
-        <div className="relative mt-4 grid grid-cols-2 gap-2">
+        <div className="relative mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
           <Stat
             tone="ghost"
             className="!bg-white/10 !border-white/15 !text-white"

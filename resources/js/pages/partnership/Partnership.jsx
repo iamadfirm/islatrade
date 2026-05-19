@@ -61,7 +61,7 @@ export default function Partnership() {
             </p>
           </div>
         </div>
-        <div className="relative mt-5 grid grid-cols-3 gap-2">
+        <div className="relative mt-5 grid grid-cols-1 gap-2 sm:grid-cols-3">
           <Stat
             tone="ghost"
             className="!bg-white/10 !border-white/15 !text-white"
