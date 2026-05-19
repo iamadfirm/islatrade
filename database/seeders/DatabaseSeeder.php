@@ -12,6 +12,8 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             AdminSeeder::class,
             InvestmentPackageSeeder::class,
+            FeatureSettingSeeder::class,
+            DepositMethodSeeder::class,
         ]);
     }
 }

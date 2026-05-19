@@ -12,6 +12,8 @@ class WithdrawalResource extends JsonResource
         return [
             'uuid' => $this->uuid,
             'amount' => $this->amount,
+            'fee' => $this->fee,
+            'net_amount' => $this->net_amount,
             'bank_name' => $this->bank_name,
             'account_name' => $this->account_name,
             'account_number' => $this->account_number,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DepositResource;
 use App\Models\Deposit;
+use App\Models\DepositMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -17,11 +18,29 @@ class DepositController extends Controller
         );
     }
 
+    public function methods()
+    {
+        return DepositMethod::where('enabled', true)
+            ->orderBy('sort')
+            ->get()
+            ->map(fn ($m) => [
+                'key' => $m->key,
+                'label' => $m->label,
+                'instructions' => $m->instructions,
+                'account_name' => $m->account_name,
+                'account_number' => $m->account_number,
+                'image_url' => $m->image_url,
+            ]);
+    }
+
     public function store(Request $request)
     {
+        $allowed = DepositMethod::where('enabled', true)->pluck('key')->toArray();
+        if (empty($allowed)) $allowed = ['bank', 'gcash', 'maya', 'other'];
+
         $data = $request->validate([
             'amount' => ['required', 'numeric', 'min:50'],
-            'method' => ['required', 'string', 'in:bank,gcash,maya,other'],
+            'method' => ['required', 'string', 'in:' . implode(',', $allowed)],
             'reference_number' => ['nullable', 'string', 'max:64'],
             'proof' => ['required', 'image', 'max:5120'],
         ]);

@@ -35,6 +35,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'phone_verified_at' => 'datetime',
             'kyc_submitted_at' => 'datetime',
+            'frozen_at' => 'datetime',
             'kyc_status' => KycStatus::class,
             'password' => 'hashed',
         ];
@@ -77,6 +78,11 @@ class User extends Authenticatable
     public function kycSubmissions(): HasMany
     {
         return $this->hasMany(KycSubmission::class)->latest('id');
+    }
+
+    public function isFrozen(): bool
+    {
+        return $this->frozen_at !== null;
     }
 
     public function getWalletBalanceAttribute(): string

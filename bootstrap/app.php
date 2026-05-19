@@ -19,6 +19,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'kyc.approved' => \App\Http\Middleware\EnsureKycApproved::class,
+            'feature' => \App\Http\Middleware\EnsureFeatureEnabled::class,
+            'not.frozen' => \App\Http\Middleware\EnsureNotFrozen::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

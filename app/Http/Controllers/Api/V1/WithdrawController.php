@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\WalletTxType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\WithdrawalResource;
+use App\Models\FeatureSetting;
 use App\Models\Withdrawal;
 use App\Services\WalletService;
 use Illuminate\Http\Request;
@@ -18,11 +19,15 @@ class WithdrawController extends Controller
 
     public function info(Request $request)
     {
+        $feature = FeatureSetting::for('withdraw');
+
         return response()->json([
             'min_amount' => 100,
             'currency' => 'PHP',
             'kyc_status' => $request->user()->kyc_status?->toArray(),
             'balance' => $this->wallet->balance($request->user()),
+            'fee_flat' => (float) ($feature?->fee_flat ?? 0),
+            'fee_percent' => (float) ($feature?->fee_percent ?? 0),
         ]);
     }
 
@@ -40,21 +45,38 @@ class WithdrawController extends Controller
             'account_number' => ['required', 'string', 'max:64'],
         ]);
 
-        $withdrawal = DB::transaction(function () use ($request, $data) {
-            if ((float) $this->wallet->balance($request->user()) < (float) $data['amount']) {
+        $feature = FeatureSetting::for('withdraw');
+        $amount = (float) $data['amount'];
+        $fee = $feature?->calcFee($amount) ?? 0.0;
+        $net = round($amount - $fee, 2);
+
+        if ($net <= 0) {
+            throw ValidationException::withMessages([
+                'amount' => 'Amount must exceed the withdrawal fee.',
+            ]);
+        }
+
+        $withdrawal = DB::transaction(function () use ($request, $data, $amount, $fee, $net) {
+            if ((float) $this->wallet->balance($request->user()) < $amount) {
                 throw ValidationException::withMessages(['amount' => 'Insufficient balance.']);
             }
 
-            $w = $request->user()->withdrawals()->create($data + ['status' => 'pending']);
+            $w = $request->user()->withdrawals()->create($data + [
+                'status' => 'pending',
+                'fee' => $fee,
+                'net_amount' => $net,
+            ]);
 
-            // Hold funds at request time so balance can't be double-spent before admin reviews.
+            // Hold full gross amount upfront so it can't be double-spent.
             try {
                 $this->wallet->debit(
                     $request->user(),
-                    (float) $data['amount'],
+                    $amount,
                     WalletTxType::Withdrawal,
                     $w,
-                    "Withdrawal request hold"
+                    $fee > 0
+                        ? sprintf('Withdrawal hold (fee %s)', number_format($fee, 2))
+                        : 'Withdrawal request hold'
                 );
             } catch (RuntimeException $e) {
                 throw ValidationException::withMessages(['amount' => $e->getMessage()]);

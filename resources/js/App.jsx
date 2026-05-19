@@ -20,6 +20,10 @@ import AdminWithdrawals from "./pages/admin/AdminWithdrawals";
 import AdminKyc from "./pages/admin/AdminKyc";
 import AdminPackages from "./pages/admin/AdminPackages";
 import AdminUsers from "./pages/admin/AdminUsers";
+import AdminSettings from "./pages/admin/AdminSettings";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminRoles from "./pages/admin/AdminRoles";
+import AdminDepositMethods from "./pages/admin/AdminDepositMethods";
 
 const qc = new QueryClient({
   defaultOptions: { queries: { staleTime: 5 * 60 * 1000, retry: 1, refetchOnWindowFocus: false } },
@@ -30,7 +34,7 @@ function Protected({ children, admin }) {
   const loc = useLocation();
   if (loading) return <div className="flex h-screen items-center justify-center text-slate-400">Loading…</div>;
   if (!user) return <Navigate to="/login" replace state={{ from: loc }} />;
-  if (admin && !user.is_admin) return <Navigate to="/" replace />;
+  if (admin && !(user.is_admin || user.is_staff)) return <Navigate to="/" replace />;
   return children;
 }
 
@@ -58,12 +62,15 @@ export default function App() {
           </Route>
 
           <Route path="/admin" element={<Protected admin><AdminLayout /></Protected>}>
-            <Route index element={<Navigate to="deposits" replace />} />
+            <Route index element={<AdminDashboard />} />
             <Route path="deposits" element={<AdminDeposits />} />
             <Route path="withdrawals" element={<AdminWithdrawals />} />
             <Route path="kyc" element={<AdminKyc />} />
             <Route path="packages" element={<AdminPackages />} />
             <Route path="users" element={<AdminUsers />} />
+            <Route path="settings" element={<AdminSettings />} />
+            <Route path="roles" element={<AdminRoles />} />
+            <Route path="deposit-methods" element={<AdminDepositMethods />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />
