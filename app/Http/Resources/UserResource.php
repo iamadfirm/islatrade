@@ -7,6 +7,7 @@ use App\Services\WalletService;
 use App\Support\AdminCapabilities;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class UserResource extends JsonResource
 {
@@ -20,6 +21,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'phone' => $this->phone,
             'email' => $this->email,
+            'avatar_url' => $this->avatar_path ? Storage::url($this->avatar_path) : null,
             'kyc_status' => $this->kyc_status?->toArray(),
             'wallet_balance' => app(WalletService::class)->balance($this->resource),
             'roles' => $this->getRoleNames(),

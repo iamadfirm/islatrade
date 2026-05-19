@@ -205,7 +205,7 @@ function SidebarContent({ nav, user, onLogout, mobile }) {
 
       <div className="border-t border-white/10 p-3">
         <div className="mb-2 flex items-center gap-2 rounded-xl bg-white/5 p-2">
-          <Avatar name={user?.name} size={32} />
+          <Avatar name={user?.name} src={user?.avatar_url} size={32} />
           <div className="min-w-0">
             <p className="truncate text-xs font-semibold text-white">{user?.name}</p>
             <p className="text-[10px] text-gold-300">Administrator</p>

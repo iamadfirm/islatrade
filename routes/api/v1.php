@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\DepositController;
 use App\Http\Controllers\Api\V1\WithdrawController;
 use App\Http\Controllers\Api\V1\CryptoController;
 use App\Http\Controllers\Api\V1\KycController;
+use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\Partnership\PackageController;
 use App\Http\Controllers\Api\V1\Partnership\InvestmentController;
 use App\Http\Controllers\Api\V1\Admin;
@@ -17,6 +18,12 @@ Route::post('auth/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('auth/me', [AuthController::class, 'me']);
     Route::post('auth/logout', [AuthController::class, 'logout']);
+
+    // Profile
+    Route::put('profile', [ProfileController::class, 'update']);
+    Route::put('profile/password', [ProfileController::class, 'changePassword']);
+    Route::post('profile/avatar', [ProfileController::class, 'uploadAvatar']);
+    Route::delete('profile/avatar', [ProfileController::class, 'deleteAvatar']);
 
     // Crypto market proxy (CoinGecko, server-side cached)
     Route::get('crypto/prices', [CryptoController::class, 'prices']);

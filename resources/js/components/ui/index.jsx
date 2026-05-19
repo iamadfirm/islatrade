@@ -174,13 +174,23 @@ export function Pill({ tone = "slate", children, dot = false, className = "" }) 
   );
 }
 
-export function Avatar({ name = "?", size = 40, className = "" }) {
+export function Avatar({ name = "?", src = null, size = 40, className = "" }) {
   const initials = String(name || "?")
     .split(" ")
     .filter(Boolean)
     .slice(0, 2)
     .map((s) => s[0]?.toUpperCase())
     .join("");
+  if (src) {
+    return (
+      <img
+        src={src}
+        alt={name}
+        className={`inline-block shrink-0 rounded-full object-cover ring-2 ring-white ${className}`}
+        style={{ width: size, height: size }}
+      />
+    );
+  }
   return (
     <span
       className={`inline-flex shrink-0 items-center justify-center rounded-full gradient-brand text-white font-bold ring-2 ring-white ${className}`}

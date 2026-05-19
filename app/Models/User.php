@@ -22,6 +22,9 @@ class User extends Authenticatable
         'email',
         'phone',
         'password',
+        'avatar_path',
+        'kyc_status',
+        'kyc_submitted_at',
     ];
 
     protected $hidden = [
