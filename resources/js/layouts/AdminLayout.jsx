@@ -17,6 +17,7 @@ import {
   UserCircle,
   KeySquare,
   Wallet2,
+  Briefcase,
 } from "lucide-react";
 import { useAuth } from "../stores/authStore";
 import api from "../lib/api";
@@ -36,6 +37,7 @@ export default function AdminLayout() {
   const canWithdrawals = useCan("withdrawals.manage");
   const canKyc = useCan("kyc.manage");
   const canPackages = useCan("packages.manage");
+  const canInvestments = useCan("investments.view");
   const canUsers = useCan("users.manage");
   const canSettings = useCan("settings.manage");
   const canRoles = useCan("roles.manage");
@@ -55,6 +57,7 @@ export default function AdminLayout() {
     canWithdrawals && { to: "/admin/withdrawals", icon: Wallet, label: "Withdrawals", badge: counts.withdrawals },
     canKyc && { to: "/admin/kyc", icon: ShieldCheck, label: "KYC", badge: counts.kyc },
     canPackages && { to: "/admin/packages", icon: Layers, label: "Packages" },
+    canInvestments && { to: "/admin/investments", icon: Briefcase, label: "Investors" },
     canUsers && { to: "/admin/users", icon: Users, label: "Users" },
     canRoles && { to: "/admin/roles", icon: KeySquare, label: "Roles" },
     canSettings && { to: "/admin/deposit-methods", icon: Wallet2, label: "Pay methods" },

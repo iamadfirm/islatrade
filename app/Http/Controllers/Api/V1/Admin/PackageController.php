@@ -47,7 +47,7 @@ class PackageController extends Controller
             'min_amount' => [$req, 'numeric', 'min:1'],
             'max_amount' => ['nullable', 'numeric', 'gte:min_amount'],
             'interest_rate' => [$req, 'numeric', 'min:0'],
-            'frequency' => [$req, 'string', 'in:daily,weekly,monthly'],
+            'frequency' => [$req, 'string', 'in:hourly,daily,weekly,monthly'],
             'term_days' => [$req, 'integer', 'min:1'],
             'is_active' => ['boolean'],
         ]);

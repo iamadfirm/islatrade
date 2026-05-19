@@ -86,6 +86,11 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::apiResource('packages', Admin\PackageController::class);
         });
 
+        Route::middleware('permission:investments.view')->group(function () {
+            Route::get('investments', [Admin\InvestmentController::class, 'index']);
+            Route::get('investments/{investment}', [Admin\InvestmentController::class, 'show']);
+        });
+
         Route::middleware('permission:users.manage')->group(function () {
             Route::get('users', [Admin\UserController::class, 'index']);
             Route::get('users/{user}', [Admin\UserController::class, 'show']);

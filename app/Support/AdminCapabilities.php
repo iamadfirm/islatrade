@@ -14,6 +14,7 @@ class AdminCapabilities
         'kyc.manage' => 'Manage KYC submissions',
         'users.manage' => 'Manage users',
         'packages.manage' => 'Manage investment packages',
+        'investments.view' => 'View partnership investments',
         'settings.manage' => 'Manage feature settings & fees',
         'roles.manage' => 'Manage roles & access',
     ];

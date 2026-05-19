@@ -62,8 +62,9 @@ export default function EnrollForm() {
   // Simpler: project = principal * (interest_rate/100) * payouts_count
   const projection = useMemo(() => {
     if (!p || !a) return null;
-    const intervalDays = { daily: 1, weekly: 7, monthly: 30 }[p.frequency.value] || 1;
-    const payouts = Math.max(1, Math.floor(p.term_days / intervalDays));
+    const payoutsPerDay = { hourly: 24, daily: 1, weekly: 1 / 7, monthly: 1 / 30 }[p.frequency.value] || 1;
+    const intervalDays = 1 / payoutsPerDay;
+    const payouts = Math.max(1, Math.floor(p.term_days * payoutsPerDay));
     const perPayout = a * (Number(p.interest_rate) / 100);
     const total = perPayout * payouts;
     return { payouts, perPayout, total, intervalDays };

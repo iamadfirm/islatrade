@@ -19,6 +19,7 @@ import AdminDeposits from "./pages/admin/AdminDeposits";
 import AdminWithdrawals from "./pages/admin/AdminWithdrawals";
 import AdminKyc from "./pages/admin/AdminKyc";
 import AdminPackages from "./pages/admin/AdminPackages";
+import AdminInvestments from "./pages/admin/AdminInvestments";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -67,6 +68,7 @@ export default function App() {
             <Route path="withdrawals" element={<AdminWithdrawals />} />
             <Route path="kyc" element={<AdminKyc />} />
             <Route path="packages" element={<AdminPackages />} />
+            <Route path="investments" element={<AdminInvestments />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="settings" element={<AdminSettings />} />
             <Route path="roles" element={<AdminRoles />} />

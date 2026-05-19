@@ -32,7 +32,7 @@ class InvestmentService
         return DB::transaction(function () use ($user, $package, $amount) {
             $now = Carbon::now();
             $matures = $now->copy()->addDays($package->term_days);
-            $next = $now->copy()->addDays($package->frequency->intervalDays());
+            $next = $package->frequency->addInterval($now);
             if ($next->greaterThan($matures)) {
                 $next = $matures->copy();
             }
@@ -110,7 +110,7 @@ class InvestmentService
                 $investment->total_paid_out = (float) $investment->total_paid_out + $interest;
             }
 
-            $next = $investment->next_payout_at->copy()->addDays($investment->frequency->intervalDays());
+            $next = $investment->frequency->addInterval($investment->next_payout_at);
             if ($next->greaterThanOrEqualTo($investment->matures_at)) {
                 $this->wallet->credit(
                     $investment->user,
