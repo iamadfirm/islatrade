@@ -31,6 +31,7 @@ class FeatureSetting extends Model
         'withdraw' => 'Withdraw',
         'transfer' => 'Transfer',
         'partnership' => 'Partnership',
+        'referral' => 'Referral bonus',
     ];
 
     public static function all_cached(): \Illuminate\Support\Collection

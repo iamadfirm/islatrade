@@ -14,6 +14,7 @@ import {
   TrendingUp,
   Menu,
   X,
+  Gift,
 } from "lucide-react";
 import { useAuth } from "../stores/authStore";
 import { peso } from "../lib/api";
@@ -30,6 +31,7 @@ const quickNav = [
   { to: "/deposit", icon: ArrowDownToLine, label: "Deposit" },
   { to: "/withdraw", icon: ArrowUpFromLine, label: "Withdraw" },
   { to: "/transfer", icon: ArrowLeftRight, label: "Transfer" },
+  { to: "/referrals", icon: Gift, label: "Referrals" },
   { to: "/kyc", icon: ShieldCheck, label: "KYC" },
 ];
 
