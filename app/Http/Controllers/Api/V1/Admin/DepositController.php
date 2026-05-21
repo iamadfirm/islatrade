@@ -66,7 +66,7 @@ class DepositController extends Controller
             ->where('status', Status::Approved)
             ->orderBy('id')
             ->value('id');
-        if ($firstApproved !== $deposit->id) {
+        if ((int) $firstApproved !== (int) $deposit->id) {
             return;
         }
 
