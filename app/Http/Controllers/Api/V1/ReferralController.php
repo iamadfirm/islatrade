@@ -25,7 +25,10 @@ class ReferralController extends Controller
         return response()->json([
             'data' => [
                 'referral_code' => $user->referral_code,
-                'bonus_amount' => $setting ? (float) $setting->fee_flat : 0,
+                'bonus_type' => $setting?->bonus_type ?? 'percent',
+                'bonus_flat' => $setting ? (float) $setting->fee_flat : 0,
+                'bonus_percent' => $setting ? (float) $setting->fee_percent : 0,
+                'recurring' => (bool) ($setting?->recurring ?? false),
                 'enabled' => (bool) ($setting?->enabled ?? false),
                 'total_earned' => $totalEarned,
                 'pending_count' => $pending,

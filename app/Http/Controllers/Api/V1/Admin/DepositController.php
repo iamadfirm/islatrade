@@ -55,45 +55,38 @@ class DepositController extends Controller
 
     private function payReferralBonusIfEligible(Deposit $deposit): void
     {
-        $referral = Referral::where('referee_id', $deposit->user_id)
-            ->whereNull('bonus_paid_at')
-            ->first();
-        if (! $referral) {
-            return;
-        }
-
-        $firstApproved = Deposit::where('user_id', $deposit->user_id)
-            ->where('status', Status::Approved)
-            ->orderBy('id')
-            ->value('id');
-        if ((int) $firstApproved !== (int) $deposit->id) {
-            return;
-        }
-
         $setting = FeatureSetting::for('referral');
         if (! $setting || ! $setting->enabled) {
             return;
         }
-        $bonus = (float) $setting->fee_flat;
+
+        $referral = Referral::where('referee_id', $deposit->user_id)->first();
+        if (! $referral || ! $referral->referrer) {
+            return;
+        }
+
+        // One-time programs pay only the first approved deposit. Each deposit
+        // can be approved exactly once, so this also guards against double pay.
+        if (! $setting->recurring && $referral->bonus_paid_at) {
+            return;
+        }
+
+        $bonus = $setting->referralBonus((float) $deposit->amount);
         if ($bonus <= 0) {
             return;
         }
 
-        $referrer = $referral->referrer;
-        if (! $referrer) {
-            return;
-        }
-
         $this->wallet->credit(
-            $referrer,
+            $referral->referrer,
             $bonus,
             WalletTxType::ReferralBonus,
             $referral,
             "Referral bonus from {$deposit->user->phone}"
         );
 
+        // bonus_amount accumulates the lifetime total earned from this referee.
         $referral->update([
-            'bonus_amount' => $bonus,
+            'bonus_amount' => (float) $referral->bonus_amount + $bonus,
             'bonus_paid_at' => now(),
         ]);
     }

@@ -89,8 +89,17 @@ export default function Referrals() {
             <p className="mt-1 text-xs text-white/70">
               {d?.enabled !== false ? (
                 <>
-                  You get <b className="text-gold-300">{peso(d?.bonus_amount)}</b> credited to your wallet
-                  when a friend signs up with your code and their first deposit is approved.
+                  You earn{" "}
+                  <b className="text-gold-300">
+                    {d?.bonus_type === "flat"
+                      ? peso(d?.bonus_flat)
+                      : `${Number(d?.bonus_percent)}%`}
+                  </b>{" "}
+                  {d?.bonus_type === "flat" ? "" : "of your friend's deposit "}
+                  credited to your wallet when a friend signs up with your code and{" "}
+                  {d?.recurring
+                    ? "makes an approved deposit — on every deposit they make."
+                    : "their first deposit is approved."}
                 </>
               ) : (
                 <>The referral program is currently paused. Existing pending referrals will be paid when re-enabled.</>
@@ -211,8 +220,9 @@ export default function Referrals() {
       <div className="mt-5 flex items-start gap-2 rounded-2xl bg-brand-50 p-3 text-[11px] text-brand-800 ring-1 ring-brand-100">
         <Sparkles size={14} className="mt-0.5 shrink-0 text-brand-600" />
         <p>
-          Your bonus is credited automatically when your friend's first deposit is
-          approved by an admin. There's no limit to how many people you can refer.
+          Your bonus is credited automatically when your friend's{" "}
+          {d?.recurring ? "deposits are" : "first deposit is"} approved by an admin.
+          There's no limit to how many people you can refer.
         </p>
       </div>
     </PageWrap>

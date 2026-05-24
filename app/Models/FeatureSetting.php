@@ -7,11 +7,12 @@ use Illuminate\Support\Facades\Cache;
 
 class FeatureSetting extends Model
 {
-    protected $fillable = ['key', 'label', 'enabled', 'requires_kyc', 'disabled_message', 'fee_flat', 'fee_percent'];
+    protected $fillable = ['key', 'label', 'enabled', 'requires_kyc', 'disabled_message', 'fee_flat', 'fee_percent', 'recurring', 'bonus_type'];
 
     protected $casts = [
         'enabled' => 'boolean',
         'requires_kyc' => 'boolean',
+        'recurring' => 'boolean',
         'fee_flat' => 'decimal:2',
         'fee_percent' => 'decimal:4',
     ];
@@ -22,6 +23,20 @@ class FeatureSetting extends Model
         $pct = (float) $this->fee_percent;
         $fee = $flat + ($amount * $pct / 100);
         return round(max(0, $fee), 2);
+    }
+
+    /**
+     * Referral bonus earned for a referee deposit of the given amount.
+     * The admin picks one mode via `bonus_type`: a flat ₱ amount, or a
+     * percent of the referee's deposit — never both, to avoid confusion.
+     */
+    public function referralBonus(float $depositAmount): float
+    {
+        $bonus = $this->bonus_type === 'flat'
+            ? (float) $this->fee_flat
+            : $depositAmount * (float) $this->fee_percent / 100;
+
+        return round(max(0, $bonus), 2);
     }
 
     public const CACHE_KEY = 'feature_settings.all';

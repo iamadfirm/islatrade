@@ -31,6 +31,8 @@ class SettingController extends Controller
             'label' => ['sometimes', 'string', 'max:120'],
             'fee_flat' => ['sometimes', 'numeric', 'min:0', 'max:1000000'],
             'fee_percent' => ['sometimes', 'numeric', 'min:0', 'max:100'],
+            'recurring' => ['sometimes', 'boolean'],
+            'bonus_type' => ['sometimes', 'in:flat,percent'],
         ]);
 
         $feature = FeatureSetting::where('key', $key)->firstOrFail();
@@ -49,6 +51,8 @@ class SettingController extends Controller
             'disabled_message' => $f->disabled_message,
             'fee_flat' => $f->fee_flat,
             'fee_percent' => $f->fee_percent,
+            'recurring' => $f->recurring,
+            'bonus_type' => $f->bonus_type,
         ];
     }
 }
