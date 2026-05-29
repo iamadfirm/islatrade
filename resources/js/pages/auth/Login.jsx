@@ -37,9 +37,7 @@ export default function Login() {
       <div className="flex min-h-screen items-center justify-center px-6 py-10 lg:min-h-0 lg:px-12">
         <div className="w-full max-w-md">
           <div className="mb-8 flex items-center gap-3 lg:hidden">
-            <span className="grid h-11 w-11 place-items-center rounded-2xl gradient-gold text-brand-900 font-black shadow-lg shadow-gold-400/30">
-              IT
-            </span>
+            <img src="/logo.png" alt="Isla Trade" className="h-11 w-11 rounded-2xl shadow-lg shadow-gold-400/30" />
             <div>
               <p className="text-base font-bold tracking-wide text-brand-800">
                 ISLA TRADE WALLET
@@ -156,9 +154,7 @@ function AuthHero({ eyebrow, title, subtitle }) {
 
       <div className="relative">
         <div className="flex items-center gap-3">
-          <span className="grid h-12 w-12 place-items-center rounded-2xl gradient-gold text-brand-900 font-black shadow-lg shadow-gold-400/30">
-            IT
-          </span>
+          <img src="/logo.png" alt="Isla Trade" className="h-12 w-12 rounded-2xl shadow-lg shadow-gold-400/30" />
           <div>
             <p className="text-base font-bold tracking-wide">ISLA TRADE WALLET</p>
             <p className="text-xs text-gold-400/80">Digital wallet & investments</p>

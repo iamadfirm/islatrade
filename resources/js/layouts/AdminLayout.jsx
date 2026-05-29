@@ -180,9 +180,7 @@ function SidebarContent({ nav, user, onLogout, mobile }) {
     <>
       <div className={`px-6 ${mobile ? "pt-5" : "pt-7"} pb-5 border-b border-white/10`}>
         <div className="flex items-center gap-2.5">
-          <div className="grid h-9 w-9 place-items-center rounded-xl gradient-gold text-brand-900 font-black shadow-lg shadow-gold-500/30">
-            H
-          </div>
+          <img src="/logo.png" alt="Isla Trade" className="h-9 w-9 rounded-xl shadow-lg shadow-gold-500/30" />
           <div>
             <p className="text-sm font-semibold tracking-wide">ISLA TRADE WALLET</p>
             <p className="text-[11px] text-gold-300/80">Admin Console</p>
