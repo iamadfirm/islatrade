@@ -3,6 +3,23 @@ import { Link, useNavigate } from "react-router-dom";
 import { Phone, Lock, TrendingUp, ShieldCheck, Coins, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../../stores/authStore";
 
+const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=61590089355623";
+
+function Facebook({ size = 18, ...props }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.52 1.49-3.91 3.78-3.91 1.1 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.78-1.63 1.57v1.88h2.78l-.44 2.91h-2.34V22c4.78-.76 8.44-4.92 8.44-9.94Z" />
+    </svg>
+  );
+}
+
 export default function Login() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -116,6 +133,16 @@ export default function Login() {
               </Link>
             </p>
           </form>
+
+          <a
+            href={FACEBOOK_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 flex items-center justify-center gap-2 rounded-2xl border border-[#1877F2]/20 bg-[#1877F2]/5 px-4 py-3 text-sm font-semibold text-[#1877F2] transition hover:bg-[#1877F2]/10"
+          >
+            <Facebook size={18} />
+            Follow us on Facebook
+          </a>
 
           <p className="mt-8 text-center text-[11px] text-slate-400">
             By signing in, you agree to our Terms & Privacy Policy.
